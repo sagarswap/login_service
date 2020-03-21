@@ -17,13 +17,13 @@ pipeline {
         jacoco()
         }
     }   
-   //   stage('SonarQube'){
-   //     steps{
-   //         sh label: '', script: '''mvn sonar:sonar \
-   //       -Dsonar.host.url=http://10.0.1.159:9000 \
-   //       -Dsonar.login=228f84cc5b4a76fdf334257472ce2cd2c9b947ed'''
-   //     }
-   // }
+    stage('SonarQube'){
+      steps{
+          sh label: '', script: '''mvn sonar:sonar \
+        -Dsonar.host.url=http://sonar:9000 \
+        -Dsonar.login=f18bd60881e930515051e739c9850bc14c324476sonar'''
+        }
+      }
     stage('Maven Build'){
         steps{
                 sh label:'Maven Build of war file', script:'''
@@ -32,30 +32,14 @@ pipeline {
                 '''
         }
     }
-  stage('Docker Image Build') {
-      steps{
-         sh "docker build -t login_service:latest ."
+  stage('Docker Image Build Push') {
+        steps{
+           sh '''docker build -t 10.0.1.11:5000/login_service:latest .
+                 docker push 10.0.1.11:5000/login_service
+                 docker rmi 10.0.1.11:5000/login_service
+              '''
+        }
       }
-    }
-    stage('Docker save'){
-        steps{
-            sh "docker save login_service:latest>login_service.tar"
-        }
-    }
- 
-    stage('Upload to S3'){
-        steps{
-            withAWS(region:'us-east-1',credentials:'aws-cred')
-            {
-                s3Upload(bucket:'bucketforsprint',file:'login_service.tar',workingDir:'./');
-            }
-        }
-    }
-    stage('Tar remove'){
-        steps{
-            sh "rm login_service.tar"
-        }
-    }
   }
  
 }
