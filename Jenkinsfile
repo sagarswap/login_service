@@ -17,13 +17,13 @@ pipeline {
         jacoco()
         }
     }   
-    stage('SonarQube'){
-      steps{
-          sh label: '', script: '''mvn sonar:sonar \
-        -Dsonar.host.url=http://sonar:9000 \
-        -Dsonar.login=f18bd60881e930515051e739c9850bc14c324476sonar'''
+      stage('SonarQube'){
+        steps{
+            sh label: '', script: '''mvn sonar:sonar \
+          -Dsonar.host.url=http://sonar:9000 \
+          -Dsonar.login=f18bd60881e930515051e739c9850bc14c324476'''
         }
-      }
+    }
     stage('Maven Build'){
         steps{
                 sh label:'Maven Build of war file', script:'''
